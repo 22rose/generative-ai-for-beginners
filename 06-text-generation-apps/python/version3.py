@@ -81,7 +81,7 @@ def run_conversation():
             "type": "function",
             "function": {
                 "name": "get_purchase_order_details",
-                "description": "Get details of a specified purchase order",
+                "description": "Get details of a specified purchase order", #important to be specific and clear
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -108,8 +108,9 @@ def run_conversation():
         response = client.chat.completions.create(
             model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
             messages=messages,
-            tools=tools,
-            tool_choice="auto",  # auto is default, but we'll be explicit
+            tools=tools, #give the function tools to the api call
+            tool_choice="auto",  # auto is default, but we'll be explicit; auto means we will let LLM decide which function should 
+            #be called based on the user message rather than assigning it ourselves statically
         )
         response_message = response.choices[0].message  #first response from the model from the initial message at top
         tool_calls = response_message.tool_calls   #the response may include a request to call a function (we specifically asked
@@ -123,7 +124,7 @@ def run_conversation():
             available_functions = {
                 "get_purchase_order_details": get_purchase_order_details,
                 "display_first_three_purchase_orders": display_first_three_purchase_orders,
-            } # only one function in this example, but you can have multiple
+            } 
             messages.append(response_message)  # extend conversation with assistant's reply
             
             # Step 4: send the info for each function call and function response to the model
